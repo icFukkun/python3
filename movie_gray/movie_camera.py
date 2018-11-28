@@ -14,7 +14,7 @@ two_window = "after"
 one_file_name = "one.avi"
 two_file_name = "two.avi"
 
-one = cv2.VideoCapture(one_file_name) # 元ビデオの読み込み
+one = cv2.VideoCapture(0) # 元ビデオの読み込み
 
 ret, one_frame = one.read()
 height, width, channels = one_frame.shape
@@ -40,12 +40,11 @@ while ret == True:
 	cv2.accumulateWeighted(gray_frame, frame, 0.01) # 現在のフレームと移動平均との差を計算
 	delta_frame = cv2.absdiff(gray_frame, cv2.convertScaleAbs(frame)) # absdiff = 2つの画像の絶対値差分 
 
-	flag, thresh_frame = cv2.threshold(delta_frame, 50, 255, cv2.THRESH_BINARY)
+	flag, thresh_frame = cv2.threshold(delta_frame, 40, 255, cv2.THRESH_BINARY)
 	mask_frame = cv2.medianBlur(thresh_frame.copy(), 3)
 	img, contours, hierarchy = cv2.findContours(mask_frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 	# findContours = 2値化画像の輪郭
 	# RETE_EXTERNAL = 最も外側の輪郭のみ抽出
-	# RETE_TREE = 全ての輪郭を抽出
 	# CHAIN_APPROX_SIMPLE = 輪郭を圧縮し, 冗長点の情報を削除してメモリ消費を抑える.
 	# CHAIN_APPROX_NONE = 輪郭上の全点の情報を保持
 
@@ -56,7 +55,7 @@ while ret == True:
 
 	rec.write(two_frame) # フレームを書き込む
 
-	key = cv2.waitKey(60) # 60 msec の間入力がなければ次のフレームへ
+	key = cv2.waitKey(1) # 60 msec の間入力がなければ次のフレームへ
 	if key == esc:
 		break
 
